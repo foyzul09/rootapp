@@ -1,0 +1,33 @@
+name: RootApp Auto-Update
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+
+      - name: Update Hash
+        run: |
+          OLD_HASH=$(grep -oP 'sha256 = "\K[^"]+' flake.nix)
+          NEW_HASH=$(nix-prefetch-url --type sha256 --to-sri https://installer.rootapp.com/installer/Linux/X64/Root.AppImage)
+          
+          if [ "$OLD_HASH" != "$NEW_HASH" ]; then
+            sed -i "s|$OLD_HASH|$NEW_HASH|g" flake.nix
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add flake.nix
+            git commit -m "chore: auto-update RootApp hash"
+            git push
+          else
+            echo "No update found."
+          fi
