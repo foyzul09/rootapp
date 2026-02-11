@@ -4,7 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./rootapp.nix
+      
     ];
   
 
@@ -274,6 +274,7 @@ virtualisation.waydroid.package = pkgs.waydroid-nftables;
           inputs.silent-sddm.packages.${pkgs.stdenv.hostPlatform.system}.default
           inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
            quickshell
+           inputs.self.packages.${pkgs.system}.default
   ];
   environment.variables = {
     RUSTICL_ENABLE = "radeonsi";
