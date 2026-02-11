@@ -8,10 +8,11 @@ Welcome to my personal **NixOS Flake** repository. This project manages the `fro
 I have packaged RootApp (AppImage) with its custom icon and desktop entry. You can use it without cloning this entire repository.
 
 ### ⚡ Quick Run (Try it now!)
-```bash
-nix run github:foyzul09/rootapp
 
-To add RootApp to your own NixOS system, use this style in your flake.nix:
+
+
+### To add RootApp to your own NixOS system, use this style in your flake.nix:
+```bash
 
 inputs = {
   rootapp = {
@@ -20,7 +21,11 @@ inputs = {
   };
 };
 
-and in your configuration.nix
+```
+
+### And in your configuration.nix
+
+```bash
 environment.systemPackages = [
 
 ] ++ [
