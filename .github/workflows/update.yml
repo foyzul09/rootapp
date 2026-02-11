@@ -1,8 +1,8 @@
 name: RootApp Auto-Update
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *' # Runs every night at midnight
+  workflow_dispatch:      # Allows you to click the button manually
 
 jobs:
   check-update:
@@ -18,16 +18,26 @@ jobs:
 
       - name: Update Hash
         run: |
+          # 1. Extract the current hash from flake.nix
           OLD_HASH=$(grep -oP 'sha256 = "\K[^"]+' flake.nix)
-          NEW_HASH=$(nix-prefetch-url --type sha256 --to-sri https://installer.rootapp.com/installer/Linux/X64/Root.AppImage)
           
+          # 2. Download the AppImage and get the raw SRI hash
+          # This works on older Nix versions by using nix store prefetch-file
+          NEW_HASH=$(nix store prefetch-file https://installer.rootapp.com/installer/Linux/X64/Root.AppImage --json | jq -r .hash)
+          
+          echo "Old Hash: $OLD_HASH"
+          echo "New Hash: $NEW_HASH"
+
+          # 3. Compare and Update if necessary
           if [ "$OLD_HASH" != "$NEW_HASH" ]; then
+            echo "Update detected! Updating flake.nix..."
             sed -i "s|$OLD_HASH|$NEW_HASH|g" flake.nix
+            
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add flake.nix
-            git commit -m "chore: auto-update RootApp hash"
+            git commit -m "chore: auto-update RootApp hash to $NEW_HASH"
             git push
           else
-            echo "No update found."
+            echo "No update found. Keeping old hash."
           fi
