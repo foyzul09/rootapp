@@ -18,7 +18,7 @@
           version = "latest";
           src = pkgs.fetchurl {
             url = "https://installer.rootapp.com/installer/Linux/X64/Root.AppImage";
-            sha256 = "sha256-r47eHKkaUenzY+Dp+CKZRkEqmKwhqxO+Jy++d5T2omA=";
+            sha256 = "sha256-rdhCGvBpVsb8LmBktg1Brm4+8MWLFAeIC6ASntyHZD8=";
           };
 
           extraInstallCommands = ''
